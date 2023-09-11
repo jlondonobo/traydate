@@ -1,14 +1,11 @@
-import sys
 import time
 from datetime import datetime
 from typing import Iterable
 
 import pandas as pd
 from constants import HEADERS, ID_COLS, RENAMER
-from utils import calculate_future_dates, hash_columns
-
-sys.path.append("..")
 from pydel.client import Pydel
+from utils import calculate_future_dates, hash_columns
 
 
 def _fetch_multi_day_timeslots(
@@ -18,13 +15,13 @@ def _fetch_multi_day_timeslots(
     results_collection = []
     for date in dates:
         single_day_results = pydel.timeslots(date)
-        results_collection.extend(single_day_results)
+        results_collection.append(single_day_results)
         time.sleep(delay)
     return results_collection
 
 
 def _results_to_pandas(results: list[dict]) -> pd.DataFrame:
-    return pd.json_normalize(results["alternative_timeslots"], "timeslots")
+    return pd.json_normalize(results, ["alternative_timeslots", "timeslots"])
 
 
 def _format_columns(data: pd.DataFrame, renamer: dict[str, str]) -> pd.DataFrame:
@@ -39,7 +36,7 @@ def fetch(days_ahead: int, delay: int = 5) -> pd.DataFrame:
     """Returns all available timeslots for a range of days."""
     pydel = Pydel(HEADERS)
     dates = calculate_future_dates(days_ahead)
-    
+
     results = _fetch_multi_day_timeslots(dates, pydel, delay)
     timeslots = _results_to_pandas(results)
     formatted_timesolts = _format_columns(timeslots, RENAMER)
