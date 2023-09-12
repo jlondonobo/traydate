@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -17,9 +19,9 @@ def get_db():
 @router.get("/{city_id}")
 def read_slots(
     city_id: str,
-    datetime: str,
+    time: datetime,
     lat: float,
     lon: float,
     db: Session = Depends(get_db),
 ):
-    return operations.get_slots(db, city_id, datetime, lat, lon)
+    return operations.get_slots(db, city_id, time, lat, lon)
