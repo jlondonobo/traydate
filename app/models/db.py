@@ -1,11 +1,11 @@
 from sqlalchemy import Column, Date, Float, Integer, String
 
-from .database import Base
+from app.models.base import Base
 
 
 class TimeSlot(Base):
     __tablename__ = "timeslots"
-    
+
     timeslot_id = Column(String, primary_key=True)
     club_id = Column(Integer)
     club_name = Column(String)
